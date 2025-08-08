@@ -1,29 +1,45 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.contrib.auth.forms import AuthenticationForm
 from django.urls import include, path
-from django_recaptcha import fields
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 from .schema import swagger_urlpatterns
 
-
-class LoginForm(AuthenticationForm):
-    captcha = fields.ReCaptchaField()
-
-    def clean(self):
-        captcha = self.cleaned_data.get("captcha")
-        if not captcha:
-            return
-        return super().clean()
+from core.task import send_email_task
 
 
-admin.site.login_form = LoginForm
-admin.site.login_template = "login.html"
+# class LoginForm(AuthenticationForm):
+#     captcha = fields.ReCaptchaField()
+#
+#     def clean(self):
+#         captcha = self.cleaned_data.get("captcha")
+#         if not captcha:
+#             return
+#         return super().clean()
+#
+#
+# admin.site.login_form = LoginForm
+# admin.site.login_template = "login.html"
+
+
+@api_view(["POST"])
+def test_email(request):
+    subject = "Test Email from Celery"
+    message = "This is a test email sent via Celery."
+    from_email = "primel040304@gmail.com"
+    recipient_list = ["jumayevjavohir585@gmail.com", "noktamov4@gmail.com"]
+    send_email_task.delay(subject, message, from_email, recipient_list)
+    return Response({"status": "email task queued"})
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/v1/common/", include("apps.common.urls", namespace="common")),
+    path('api/v1/', include("apps.user.urls", namespace="user")),
+    path('api/v1/test-email/', test_email, name='test_email'),
+
 ]
 
 urlpatterns += swagger_urlpatterns
