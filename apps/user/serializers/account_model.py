@@ -24,9 +24,7 @@ class ProfileResponseSerializer(serializers.ModelSerializer):
     def get_fields(self):
         fields = super().get_fields()
         exclude_fields = self.context.get('exclude_profile_fields', [])
-        for field in exclude_fields:
-            fields.pop(field, None)
-        return fields
+        return {k: v for k, v in fields.items() if k not in exclude_fields}
 
 
 class UserProfileResponseSerializer(serializers.ModelSerializer):
@@ -48,6 +46,4 @@ class UserProfileResponseSerializer(serializers.ModelSerializer):
     def get_fields(self):
         fields = super().get_fields()
         exclude_fields = self.context.get('exclude_fields', [])
-        for field in exclude_fields:
-            fields.pop(field, None)
-        return fields
+        return {k: v for k, v in fields.items() if k not in exclude_fields}

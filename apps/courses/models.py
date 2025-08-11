@@ -1,11 +1,14 @@
+import time
+
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
 from apps.common.models import BaseModel
+from apps.courses.enums import WebinarStatus, FeeType
 
 
 class Category(BaseModel):
-    name = models.CharField(max_length=64, unique=True)
+    name = models.CharField(max_length=64, unique=True, db_index=True)
     icon = models.ImageField(upload_to="category/icon", null=True, blank=True)
 
     def __str__(self):
@@ -18,7 +21,7 @@ class Category(BaseModel):
 
 
 class Course(BaseModel):
-    title = models.CharField(max_length=128, verbose_name="Title")
+    title = models.CharField(max_length=128, verbose_name="Title", db_index=True)
     description = models.TextField(verbose_name="Description")
     price = models.DecimalField(decimal_places=2, max_digits=10, verbose_name="Price")
     card = models.ImageField(upload_to="courses/%Y/%m", verbose_name="Card", blank=True, null=True)
@@ -34,12 +37,13 @@ class Course(BaseModel):
         verbose_name="Author",
         related_name="courses",
     )
-    rating = models.FloatField(
+    discount = models.IntegerField(
         validators=[
-            MinValueValidator(1),
-            MaxValueValidator(5),
+            MinValueValidator(0),
+            MaxValueValidator(100),
         ],
-        verbose_name="Rating"
+        verbose_name="Discount",
+        default=0,
     )
 
     def __str__(self):
@@ -50,11 +54,39 @@ class Course(BaseModel):
         verbose_name_plural = "Courses"
 
 
+class RatingCourse(BaseModel):
+    course = models.ForeignKey(
+        'courses.Course',
+        on_delete=models.CASCADE,
+        related_name="rating_courses",
+    )
+    user = models.ForeignKey(
+        'user.User',
+        on_delete=models.CASCADE,
+        related_name="rating_courses",
+    )
+    rating = models.IntegerField(
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(5),
+        ]
+    )
+
+    def __str__(self):
+        return f"{self.user.username} - {self.course}"
+
+    class Meta:
+        verbose_name = "Rating Course"
+        verbose_name_plural = "Rating Courses"
+        ordering = ['-created_at']
+
+
 class Webinar(BaseModel):
-    title = models.CharField(max_length=128, verbose_name="Title")
+    title = models.CharField(max_length=128, verbose_name="Title", db_index=True)
+    author_display_name = models.CharField(max_length=128, verbose_name="Display Name", default="", db_index=True)
     description = models.TextField(verbose_name="Description")
     price = models.DecimalField(decimal_places=2, max_digits=10, verbose_name="Price")
-    card = models.ImageField(
+    cover = models.ImageField(
         upload_to="webinars/%Y/%m", verbose_name="Card", blank=True, null=True
     )
     category = models.ForeignKey(
@@ -70,14 +102,31 @@ class Webinar(BaseModel):
         on_delete=models.CASCADE,
         verbose_name="Author",
         related_name="webinars",
+
     )
-    date = models.DateField(verbose_name="Date")
-    rating = models.FloatField(
+    datetime = models.IntegerField(
+        default=int(time.time()),
+    )
+    status = models.CharField(
+        choices=WebinarStatus.choices,
+        default=WebinarStatus.UPCOMING,
+        max_length=32,
+        verbose_name="Status",
+    )
+    fee_type = models.CharField(
+        choices=FeeType.choices,
+        default=FeeType.FREE,
+        max_length=32,
+        verbose_name='Fee Type',
+    )
+    fee_amount = models.IntegerField(
         validators=[
-            MinValueValidator(1),
-            MaxValueValidator(5),
+            MinValueValidator(500),
+            MaxValueValidator(99_999_999),
         ],
-        verbose_name="Rating"
+        null=True,
+        blank=True,
+        verbose_name="Fee Amount",
     )
 
     def __str__(self):
@@ -86,6 +135,35 @@ class Webinar(BaseModel):
     class Meta:
         verbose_name = "Webinar Course"
         verbose_name_plural = "Webinar Courses"
+
+
+class RatingWebinar(BaseModel):
+    webinar = models.ForeignKey(
+        'courses.Webinar',
+        on_delete=models.CASCADE,
+        related_name="rating_webinar",
+        verbose_name="Webinar",
+    )
+    user = models.ForeignKey(
+        'user.User',
+        on_delete=models.CASCADE,
+        related_name="rating_webinar",
+        verbose_name="User",
+    )
+    rating = models.IntegerField(
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(5),
+        ], verbose_name="Rating",
+    )
+
+    def __str__(self):
+        return f"{self.user.username} - {self.webinar}"
+
+    class Meta:
+        verbose_name = "Rating Course"
+        verbose_name_plural = "Rating Courses"
+        ordering = ['-created_at']
 
 
 class Module(BaseModel):

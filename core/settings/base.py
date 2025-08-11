@@ -28,12 +28,13 @@ LOCAL_APPS = [
     "apps.user",
     "apps.courses",
     "apps.news",
-    # "apps."
+    "apps.payment"
 ]
 
 EXTERNAL_APPS = [
     'drf_yasg',
     'django_recaptcha',
+    'django_filters',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS + EXTERNAL_APPS

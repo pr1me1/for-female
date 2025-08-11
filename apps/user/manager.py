@@ -26,9 +26,3 @@ class UserManager(BaseUserManager):
             raise ValueError("Superuser must have is_superuser=True.")
 
         return self._create_user(email, password, **extra_fields)
-
-    def active_users(self):
-        return self.filter(is_deleted=False, is_active=True)
-
-    def inactive_users(self):
-        return self.filter(is_deleted=True, is_active=True)

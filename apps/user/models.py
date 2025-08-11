@@ -69,8 +69,8 @@ class UserProfile(BaseModel):
         related_name="profile",
         verbose_name="User",
     )
-    first_name = models.CharField(max_length=128, blank=True, null=True)
-    last_name = models.CharField(max_length=128, blank=True, null=True)
+    first_name = models.CharField(max_length=128, blank=True, null=True, db_index=True)
+    last_name = models.CharField(max_length=128, blank=True, null=True, db_index=True)
     phone_number = models.CharField(
         max_length=50,  # increased bcz of suffixes
         validators=[

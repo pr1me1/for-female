@@ -2,13 +2,14 @@ from django.db import transaction
 from django.http.response import Http404
 from rest_framework import permissions
 from rest_framework import status
+from rest_framework.filters import SearchFilter
 from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.response import Response
 
+from apps.text_services.pagination import StandardResultsSetPagination
 from apps.user.models import User, UserProfile
 from apps.user.serializers.account_model import UserProfileResponseSerializer
 from apps.user.serializers.profile import ProfilePatchSerializer
-from apps.user.services.pagination import StandardResultsSetPagination
 
 
 class ProfileModelAPIView(GenericAPIView):
@@ -58,23 +59,9 @@ class ProfileListAPIView(ListAPIView):
     pagination_class = StandardResultsSetPagination
     serializer_class = UserProfileResponseSerializer
     authentication_classes = []
-
-    def get_queryset(self):
-        queryset = User.objects.filter(is_deleted=False)
-
-        username = self.request.query_params.get('username', None)
-        email = self.request.query_params.get('email', None)
-        is_active = self.request.query_params.get('is_active', None)
-
-        if username:
-            queryset = queryset.filter(username__icontains=username.strip().lower())
-        if email:
-            queryset = queryset.filter(email__icontains=email.strip().lower())
-        if is_active is not None:
-            is_active = is_active.lower() == 'true'
-            queryset = queryset.filter(is_active=is_active)
-
-        return queryset
+    filter_backends = (SearchFilter,)
+    search_fields = ['username', 'email']
+    queryset = User.objects.filter(is_deleted=False)
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -117,6 +104,9 @@ class ProfileAvatarSetAPIView(GenericAPIView):
                 {"detail": f"Invalid file format. Allowed formats: {', '.join(allowed_formats)}"},
                 status=status.HTTP_400_BAD_REQUEST
             )
+
+        if profile.avatar and hasattr(profile.avatar, 'delete'):
+            profile.avatar.delete(save=False)
 
         profile.avatar = avatar_file
         profile.save()

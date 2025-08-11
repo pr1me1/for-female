@@ -38,6 +38,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/v1/common/", include("apps.common.urls", namespace="common")),
     path('api/v1/', include("apps.user.urls", namespace="user")),
+    path('api/v1/', include("apps.courses.urls", namespace="courses")),
     path('api/v1/test-email/', test_email, name='test_email'),
 
 ]
