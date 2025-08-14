@@ -5,6 +5,8 @@ from pathlib import Path
 from distutils.util import strtobool
 from dotenv import load_dotenv
 
+from core.schema import swagger_settings
+
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -210,3 +212,7 @@ SIMPLE_JWT = {
     "TOKEN_USER_CLASS": "rest_framework_simplejwt.models.TokenUser",
 
 }
+
+#Swagger settings
+SWAGGER_SETTINGS = swagger_settings
+

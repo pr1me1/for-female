@@ -5,9 +5,8 @@ from django.urls import include, path
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from .schema import swagger_urlpatterns
-
 from core.task import send_email_task
+from .schema import swagger_urlpatterns
 
 
 # class LoginForm(AuthenticationForm):
@@ -40,7 +39,8 @@ urlpatterns = [
     path('api/v1/', include("apps.user.urls", namespace="user")),
     path('api/v1/', include("apps.courses.urls", namespace="courses")),
     path('api/v1/test-email/', test_email, name='test_email'),
-
+    path('api/v1/payments/paylov/', include('apps.payment.paylov.urls', namespace='paylov')),
+    path('api/v1/', include('apps.payment.urls', namespace='payment')),
 ]
 
 urlpatterns += swagger_urlpatterns

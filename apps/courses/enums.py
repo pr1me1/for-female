@@ -9,3 +9,7 @@ class WebinarStatus(TextChoices):
 class FeeType(TextChoices):
     FREE = "free",
     PAID = "paid"
+
+class ProductTypeChoices(TextChoices):
+    COURSE = "course", "Course"
+    WEBINAR = "webinar", "Webinar"

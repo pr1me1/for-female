@@ -7,7 +7,7 @@ from .generator import BothHttpAndHttpsSchemaGenerator
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="UIC API",
+        title="For female API",
         default_version="v1",
         description="UIC Group",
         terms_of_service="https://www.google.com/policies/terms/",
@@ -35,3 +35,14 @@ swagger_urlpatterns = [
         name="schema-redoc",
     ),
 ]
+
+swagger_settings = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header',
+            'description': 'JWT Authorization header using the Bearer scheme. Example: "Authorization: Bearer {token}"'
+        }
+    }
+}
