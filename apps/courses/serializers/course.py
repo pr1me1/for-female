@@ -57,11 +57,8 @@ class CourseCreateSerializer(serializers.Serializer):
     def get_user(self):
         request = self.context.get('request')
         user = request.user
-        if not user:
-            raise serializers.ValidationError({"error": "User was not found."})
-
-        if not user.is_authenticated:
-            raise serializers.ValidationError({"error": "User was not authenticated."})
+        if not user or not user.is_authenticated():
+            raise serializers.ValidationError({"error": "User was not found or not authenticated."})
 
         return user
 

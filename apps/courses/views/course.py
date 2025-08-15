@@ -7,7 +7,7 @@ from rest_framework.response import Response
 
 from apps.courses.models import Course
 from apps.courses.serializers.course import CourseCreateSerializer, CourseModelSerializer
-from apps.courses.services.filtersets import CategoryFilter
+from apps.courses.services.filtersets import CourseFilterByCategory
 
 
 class CreateCourseAPIView(CreateAPIView):
@@ -27,12 +27,12 @@ class CourseListAPIView(ListAPIView):
     filter_backends = [SearchFilter, DjangoFilterBackend]
     search_fields = (
         '^title',
-        '^author__username',
-        'author__email',
-        '^author__profile__first_name',
-        '^author__profile__last_name',
+        '=author__username',
+        '^author__email',
+        '=author__profile__first_name',
+        '=author__profile__last_name',
     )
-    filter_class = CategoryFilter
+    filterset_class = CourseFilterByCategory
     permission_classes = [AllowAny]
 
 

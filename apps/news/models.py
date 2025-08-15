@@ -10,6 +10,7 @@ class Post(BaseModel):
     title = models.CharField(max_length=255, verbose_name="Title")
     description = models.TextField(verbose_name="Description")
     card = models.ImageField(verbose_name="Card", upload_to="cards/", null=True, blank=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Author", null=True, blank=True)
 
     def __str__(self):
         return self.title

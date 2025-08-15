@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.filters import SearchFilter
 from rest_framework.generics import GenericAPIView, ListAPIView
-from rest_framework.permissions import IsAdminUser, AllowAny
+from rest_framework.permissions import IsAdminUser, AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from apps.courses.models import Category
@@ -24,6 +24,9 @@ class CategoryCreateView(GenericAPIView):
 
 class CategorySetIconView(GenericAPIView):
     serializer_class = CategoryModelSerializer
+    permission_classes = [IsAuthenticated]
+
+    # authentication_classes = [JWTAuthentication]
 
     def patch(self, request, category_id, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

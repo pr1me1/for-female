@@ -38,6 +38,7 @@ urlpatterns = [
     path("api/v1/common/", include("apps.common.urls", namespace="common")),
     path('api/v1/', include("apps.user.urls", namespace="user")),
     path('api/v1/', include("apps.courses.urls", namespace="courses")),
+    path('api/v1/', include("apps.news.urls", namespace="news")),
     path('api/v1/test-email/', test_email, name='test_email'),
     path('api/v1/payments/paylov/', include('apps.payment.paylov.urls', namespace='paylov')),
     path('api/v1/', include('apps.payment.urls', namespace='payment')),

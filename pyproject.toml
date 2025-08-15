@@ -20,6 +20,7 @@ dependencies = [
     "pillow>=11.3.0",
     "pre-commit>=4.2.0",
     "psycopg2-binary>=2.9.10",
+    "pyjwt>=2.10.1",
     "python-dotenv>=1.1.0",
     "redis>=6.2.0",
     "requests>=2.32.4",
