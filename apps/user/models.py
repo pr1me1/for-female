@@ -45,26 +45,22 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
         verbose_name = "Account"
         verbose_name_plural = "Accounts"
 
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
 
         constraints = [
             models.UniqueConstraint(
-                fields=['username'],
+                fields=["username"],
                 name="unique_active_username",
                 condition=models.Q(is_deleted=False),
             )
         ]
 
-        indexes = [
-            models.Index(
-                fields=["is_active", "is_deleted"]
-            )
-        ]
+        indexes = [models.Index(fields=["is_active", "is_deleted"])]
 
 
 class UserProfile(BaseModel):
     user = models.OneToOneField(
-        'User',
+        "User",
         on_delete=models.CASCADE,
         related_name="profile",
         verbose_name="User",
@@ -75,12 +71,12 @@ class UserProfile(BaseModel):
         max_length=50,  # increased bcz of suffixes
         validators=[
             RegexValidator(
-                regex=r'^\+998\d{9}$',
-                message="Phone number must be entered in the format: '+998xxxxxxx'. Up to 15 digits allowed."
+                regex=r"^\+998\d{9}$",
+                message="Phone number must be entered in the format: '+998xxxxxxx'. Up to 15 digits allowed.",
             )
         ],
         null=True,
-        blank=True
+        blank=True,
     )
     avatar = models.ImageField(upload_to=avatar_upload_path, null=True, blank=True)
     bio = models.TextField(max_length=256, null=True, blank=True)
@@ -92,15 +88,14 @@ class UserProfile(BaseModel):
     )
     reason_delete_str = models.TextField(null=True, blank=True, max_length=256)
     interests = models.ManyToManyField(
-        'Interest',
-        through='UserInterest',
-        blank=True,
+        "Interest",
+        through="UserInterest",
         related_name="user_interests",
-        null=True,
     )
 
     def soft_delete(self):
         import time
+
         timestamp = int(time.time())
         if self.phone_number:
             self.phone_number = f"{self.phone_number}_deleted_{timestamp}"
@@ -112,9 +107,7 @@ class UserProfile(BaseModel):
     class Meta:
         verbose_name = "Profile"
         verbose_name_plural = "Profiles"
-        indexes = [
-            models.Index(fields=["phone_number"])
-        ]
+        indexes = [models.Index(fields=["phone_number"])]
 
 
 class Interest(BaseModel):
@@ -126,21 +119,19 @@ class Interest(BaseModel):
     class Meta:
         verbose_name = "Interest"
         verbose_name_plural = "Interests"
-        indexes = [
-            models.Index(fields=["name"])
-        ]
+        indexes = [models.Index(fields=["name"])]
 
 
 class UserInterest(BaseModel):
     interest = models.ForeignKey(
-        'Interest',
+        "Interest",
         on_delete=models.CASCADE,
         related_name="interest_user_relations",
         blank=True,
         null=True,
     )
     user_profile = models.ForeignKey(
-        'UserProfile',
+        "UserProfile",
         on_delete=models.CASCADE,
         related_name="user_interest_relations",
         blank=True,
@@ -148,27 +139,28 @@ class UserInterest(BaseModel):
     )
 
     def __str__(self):
-        return f"Interest of {self.user_profile.first_name} {self.user_profile.last_name}"
+        return (
+            f"Interest of {self.user_profile.first_name} {self.user_profile.last_name}"
+        )
 
     class Meta:
         verbose_name = "User Interest"
         verbose_name_plural = "User Interests"
         constraints = [
             models.UniqueConstraint(
-                fields=['user_profile', 'interest'],
-                name='unique_user_interest'
+                fields=["user_profile", "interest"], name="unique_user_interest"
             )
         ]
 
 
 class UserCourse(BaseModel):
     user = models.ForeignKey(
-        'User',
+        "User",
         on_delete=models.CASCADE,
         related_name="user_course_relations",
     )
     course = models.ForeignKey(
-        'courses.Course',
+        "courses.Course",
         on_delete=models.CASCADE,
         related_name="user_course_relations",
     )
@@ -183,12 +175,12 @@ class UserCourse(BaseModel):
 
 class UserWebinar(BaseModel):
     user = models.ForeignKey(
-        'User',
+        "User",
         on_delete=models.CASCADE,
         related_name="user_webinar_relations",
     )
     webinar = models.ForeignKey(
-        'courses.Webinar',
+        "courses.Webinar",
         on_delete=models.CASCADE,
         related_name="user_webinar_relations",
     )

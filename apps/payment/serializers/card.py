@@ -8,28 +8,28 @@ class CardModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserCard
         fields = (
-            'id',
-            'user__username',
+            "id",
+            "user__username",
             # 'card_token',
-            'provider__name',
-            'cardholder_name',
-            'last_four_digits',
-            'brand',
-            'expire_month',
-            'expire_year',
-            'is_confirmed'
+            "provider__name",
+            "cardholder_name",
+            "last_four_digits",
+            "brand",
+            "expire_month",
+            "expire_year",
+            "is_confirmed",
         )
         read_only_fields = (
-            'id',
-            'user__username',
+            "id",
+            "user__username",
             # 'card_token',
-            'provider__name',
-            'cardholder_name',
-            'last_four_digits',
-            'brand',
-            'expire_month',
-            'expire_year',
-            'is_confirmed'
+            "provider__name",
+            "cardholder_name",
+            "last_four_digits",
+            "brand",
+            "expire_month",
+            "expire_year",
+            "is_confirmed",
         )
 
 
@@ -50,7 +50,9 @@ class DeleteCardSerializer(serializers.Serializer):
 
 
 class CardReceiptCreateSerializer(serializers.Serializer):
-    product_type = serializers.ChoiceField(choices=ProductTypeChoices.choices, required=True)
+    product_type = serializers.ChoiceField(
+        choices=ProductTypeChoices.choices, required=True
+    )
     product_id = serializers.IntegerField(required=True)
     card_token = serializers.CharField(required=True)
 

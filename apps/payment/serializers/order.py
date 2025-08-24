@@ -60,20 +60,20 @@ class OrderModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = (
-            'id',
-            'amount',
-            'user__username',
-            'course__title',
-            'webinar__title',
-            'status',
-            'is_paid'
+            "id",
+            "amount",
+            "user__username",
+            "course__title",
+            "webinar__title",
+            "status",
+            "is_paid",
         )
         read_only_fields = (
-            'id',
-            'amount',
-            'user__username',
-            'course__title',
-            'webinar__title',
-            'status',
-            'is_paid'
+            "id",
+            "amount",
+            "user__username",
+            "course__title",
+            "webinar__title",
+            "status",
+            "is_paid",
         )

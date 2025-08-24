@@ -4,15 +4,21 @@ from rest_framework.filters import SearchFilter
 from rest_framework.generics import CreateAPIView, ListAPIView, GenericAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from apps.courses.models import Webinar
-from apps.courses.serializers.webinar import WebinarModelSerializer, WebinarCreateSerializer
+from apps.courses.serializers.webinar import (
+    WebinarModelSerializer,
+    WebinarCreateSerializer,
+)
 from apps.courses.services.filtersets import WebinarFilterByCategory
 
 
 class WebinarCreateAPIView(CreateAPIView):
     serializer_class = WebinarCreateSerializer
     permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -20,7 +26,9 @@ class WebinarCreateAPIView(CreateAPIView):
 
         response = serializer.save()
 
-        return Response(WebinarModelSerializer(response).data, status=status.HTTP_201_CREATED)
+        return Response(
+            WebinarModelSerializer(response).data, status=status.HTTP_201_CREATED
+        )
 
 
 class WebinarListAPIView(ListAPIView):
@@ -28,19 +36,19 @@ class WebinarListAPIView(ListAPIView):
     serializer_class = WebinarModelSerializer
     filter_backends = [SearchFilter, DjangoFilterBackend]
     search_fields = (
-        '^title',
-        '=author__username',
-        '^author__email',
-        '=author__profile__first_name',
-        '=author__profile__last_name',
+        "^title",
+        "=author__username",
+        "^author__email",
+        "=author__profile__first_name",
+        "=author__profile__last_name",
     )
     filterset_class = WebinarFilterByCategory
-    permission_classes = [AllowAny]
-
 
 class WebinarSetCardAPIView(GenericAPIView):
     serializer_class = WebinarModelSerializer
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+
 
     def patch(self, request, webinar_id, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -51,13 +59,13 @@ class WebinarSetCardAPIView(GenericAPIView):
         except Exception as e:
             return Response({"detail": str(e)}, status=status.HTTP_404_NOT_FOUND)
 
-        card_file = request.FILES.get('card_file')
+        card_file = request.FILES.get("card_file")
         if not card_file:
             return Response(
                 {
                     "detail": "Card file not found.",
                 },
-                status=status.HTTP_404_NOT_FOUND
+                status=status.HTTP_404_NOT_FOUND,
             )
 
         if card_file.size > 5 * 1024 * 1024:
@@ -65,30 +73,30 @@ class WebinarSetCardAPIView(GenericAPIView):
                 {
                     "detail": "Card file too big.",
                 },
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if card_file.content_type not in ['image/jpeg', 'image/png', 'image/gif']:
-            return Response({
-                "detail": f"Invalid file format. Allowed formats: {', '.join(['image/jpeg', 'image/png', 'image/gif'])}"}, )
+        if card_file.content_type not in ["image/jpeg", "image/png", "image/gif"]:
+            return Response(
+                {
+                    "detail": f"Invalid file format. Allowed formats: {', '.join(['image/jpeg', 'image/png', 'image/gif'])}"
+                },
+            )
 
-        if webinar.cover and hasattr(webinar.cover, 'delete'):
+        if webinar.cover and hasattr(webinar.cover, "delete"):
             webinar.cover.delete(save=False)
 
         webinar.cover = card_file
         webinar.save()
 
-        return Response(
-            serializer.data,
-            status=status.HTTP_200_OK
-        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class WebinarDetailAPIView(GenericAPIView):
     serializer_class = WebinarCreateSerializer
-    permission_classes = [
-        IsAuthenticated,
-    ]
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+
 
     def _get_object(self, webinar_id):
         try:
@@ -106,6 +114,7 @@ class WebinarDetailAPIView(GenericAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def get(self, request, webinar_id, *args, **kwargs):
+        self.permission_classes = [AllowAny]
         webinar = self._get_object(webinar_id)
         return Response(self.serializer_class(webinar).data, status=status.HTTP_200_OK)
 
@@ -115,4 +124,9 @@ class WebinarDetailAPIView(GenericAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-_all_ = ['WebinarCreateAPIView', 'WebinarListAPIView', 'WebinarSetCardAPIView', 'WebinarDetailAPIView']
+_all_ = [
+    "WebinarCreateAPIView",
+    "WebinarListAPIView",
+    "WebinarSetCardAPIView",
+    "WebinarDetailAPIView",
+]

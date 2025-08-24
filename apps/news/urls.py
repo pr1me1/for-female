@@ -1,19 +1,179 @@
 from django.urls import path
 
-from apps.news.views.posts import (
+from apps.news.views import (
+    EventCreateAPIView,
+    EventUpdateAPIView,
+    EventListAPIView,
+    EventDetailAPIView,
+    EventDeleteAPIView,
+    EventSetCardAPIView,
+    SurveyCreateAPIView,
+    SurveyDetailAPIView,
+    SurveyDeleteAPIView,
+    SurveySetCardAPIView,
+    SurveyUpdateAPIView,
+    SurveyListAPIView,
     PostCreateAPIView,
     PostListAPIView,
     PostDetailAPIView,
     PostUpdateAPIView,
-    PostSetCardAPIView
+    PostSetCardAPIView,
+    PostDeleteAPIView,
+    QuestionCreateAPIView,
+    QuestionListAPIView,
+    QuestionDetailAPIView,
+    QuestionDeleteAPIView,
+    QuestionSetFileAPIView,
+    QuestionUpdateAPIView, QuestionOptionsCreateAPIView, QuestionOptionsRetrieveAPIView, QuestionOptionsDestroyAPIView,
+    QuestionOptionsUpdateAPIView, QuestionOptionsListAPIView, SubmissionListAPIView, SubmissionCreateAPIView,
+    SubmissionDetailAPIView,
 )
 
-app_name = 'news'
+app_name = "news"
 
 urlpatterns = [
     path("posts/create/", PostCreateAPIView.as_view(), name="post-create"),
     path("posts/list/", PostListAPIView.as_view(), name="post-list"),
     path("posts/<int:pk>/", PostDetailAPIView.as_view(), name="post-detail"),
-    path("posts/<int:pk>/update", PostUpdateAPIView.as_view(), name="post-update"),
-    path("posts/<int:post_id>/set-card", PostSetCardAPIView.as_view(), name="post-set-card"),
+    path("posts/<int:pk>/update/", PostUpdateAPIView.as_view(), name="post-update"),
+    path(
+        "posts/<int:post_id>/set-card/",
+        PostSetCardAPIView.as_view(),
+        name="post-set-card",
+    ),
+    path(
+        "posts/<int:post_id>/delete/",
+        PostDeleteAPIView.as_view(),
+        name="post-delete",
+    ),
+    path(
+        "events/create/",
+        EventCreateAPIView.as_view(),
+        name="event-create",
+    ),
+    path(
+        "events/<int:pk>/update/",
+        EventUpdateAPIView.as_view(),
+        name="event-update",
+    ),
+    path(
+        "events/list/",
+        EventListAPIView.as_view(),
+        name="event-list",
+    ),
+    path(
+        "events/<int:pk>/detail/",
+        EventDetailAPIView.as_view(),
+        name="event-detail",
+    ),
+    path(
+        "events/<int:pk>/delete/",
+        EventDeleteAPIView.as_view(),
+        name="event-delete",
+    ),
+    path(
+        "events/<int:pk>/set-card/",
+        EventSetCardAPIView.as_view(),
+        name="event-set-card",
+    ),
+    path(
+        "survey/create/",
+        SurveyCreateAPIView.as_view(),
+        name="survey-create",
+    ),
+    path(
+        "survey/<int:pk>/detail",
+        SurveyDetailAPIView.as_view(),
+        name="survey-detail",
+    ),
+    path(
+        "survey/<int:pk>/delete/",
+        SurveyDeleteAPIView.as_view(),
+        name="survey-delete",
+    ),
+    path(
+        "survey/<int:pk>/set-card/",
+        SurveySetCardAPIView.as_view(),
+        name="survey-set-card",
+    ),
+    path(
+        "survey/<int:pk>/update/",
+        SurveyUpdateAPIView.as_view(),
+        name="survey-update",
+    ),
+    path(
+        "survey/list/",
+        SurveyListAPIView.as_view(),
+        name="survey-list",
+    ),
+    path(
+        "questions/create/",
+        QuestionCreateAPIView.as_view(),
+        name="question-create",
+    ),
+    path(
+        "survey/<int:pk>/questions/",
+        QuestionListAPIView.as_view(),
+        name="survey-questions",
+    ),
+    path(
+        "questions/<int:pk>/detail/",
+        QuestionDetailAPIView.as_view(),
+        name="question-detail",
+    ),
+    path(
+        "questions/<int:pk>/delete/",
+        QuestionDeleteAPIView.as_view(),
+        name="question-delete",
+    ),
+    path(
+        "questions/<int:pk>/set-file/",
+        QuestionSetFileAPIView.as_view(),
+        name="question-set-file",
+    ),
+    path(
+        "questions/<int:pk>/update/",
+        QuestionUpdateAPIView.as_view(),
+        name="question-update",
+    ),
+    path(
+        "question_options/create/",
+        QuestionOptionsCreateAPIView.as_view(),
+        name="question-options-create",
+    ),
+    path(
+        "question_options/<int:pk>/detail/",
+        QuestionOptionsRetrieveAPIView.as_view(),
+        name="question-options-retrieve"
+    ),
+    path(
+        "question_options/<int:pk>/delete/",
+        QuestionOptionsDestroyAPIView.as_view(),
+        name="question-options-delete",
+    ),
+    path(
+        "question_options/<int:pk>/update/",
+        QuestionOptionsUpdateAPIView.as_view(),
+        name="question-options-update",
+    ),
+    path(
+        "questions/<int:pk>/options/",
+        QuestionOptionsListAPIView.as_view(),
+        name="question-options-list",
+    ),
+    path(
+        "questions/<int:pk>/submissions/",
+        SubmissionListAPIView.as_view(),
+        name="question-submissions",
+    ),
+    path(
+        "submissions/create/",
+        SubmissionCreateAPIView.as_view(),
+        name="submission-create",
+    ),
+    path(
+        "submissions/<int:pk>/detail/",
+        SubmissionDetailAPIView.as_view(),
+        name="submission-detail",
+    )
 ]

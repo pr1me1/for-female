@@ -17,22 +17,24 @@ class Category(BaseModel):
     class Meta:
         verbose_name = "Category"
         verbose_name_plural = "Categories"
-        ordering = ['name']
+        ordering = ["name"]
 
 
 class Course(BaseModel):
     title = models.CharField(max_length=128, verbose_name="Title", db_index=True)
     description = models.TextField(verbose_name="Description")
     price = models.DecimalField(decimal_places=2, max_digits=10, verbose_name="Price")
-    card = models.ImageField(upload_to="courses/%Y/%m", verbose_name="Card", blank=True, null=True)
+    card = models.ImageField(
+        upload_to="courses/%Y/%m", verbose_name="Card", blank=True, null=True
+    )
     category = models.ForeignKey(
-        'Category',
+        "Category",
         on_delete=models.CASCADE,
         verbose_name="Category",
         related_name="courses",
     )
     author = models.ForeignKey(
-        'user.User',
+        "user.User",
         on_delete=models.CASCADE,
         verbose_name="Author",
         related_name="courses",
@@ -52,16 +54,17 @@ class Course(BaseModel):
     class Meta:
         verbose_name = "Course"
         verbose_name_plural = "Courses"
+        ordering = ("-created_at",)
 
 
 class RatingCourse(BaseModel):
     course = models.ForeignKey(
-        'courses.Course',
+        "courses.Course",
         on_delete=models.CASCADE,
         related_name="rating_courses",
     )
     user = models.ForeignKey(
-        'user.User',
+        "user.User",
         on_delete=models.CASCADE,
         related_name="rating_courses",
     )
@@ -78,19 +81,21 @@ class RatingCourse(BaseModel):
     class Meta:
         verbose_name = "Rating Course"
         verbose_name_plural = "Rating Courses"
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
 
 
 class Webinar(BaseModel):
     title = models.CharField(max_length=128, verbose_name="Title", db_index=True)
-    author_display_name = models.CharField(max_length=128, verbose_name="Display Name", default="", db_index=True)
+    author_display_name = models.CharField(
+        max_length=128, verbose_name="Display Name", default="", db_index=True
+    )
     description = models.TextField(verbose_name="Description")
     price = models.DecimalField(decimal_places=2, max_digits=10, verbose_name="Price")
     cover = models.ImageField(
         upload_to="webinars/%Y/%m", verbose_name="Card", blank=True, null=True
     )
     category = models.ForeignKey(
-        'Category',
+        "Category",
         on_delete=models.SET_NULL,
         verbose_name="Category",
         related_name="webinars",
@@ -98,11 +103,10 @@ class Webinar(BaseModel):
         blank=True,
     )
     author = models.ForeignKey(
-        'user.User',
+        "user.User",
         on_delete=models.CASCADE,
         verbose_name="Author",
         related_name="webinars",
-
     )
     datetime = models.IntegerField(
         default=int(time.time()),
@@ -117,7 +121,7 @@ class Webinar(BaseModel):
         choices=FeeType.choices,
         default=FeeType.FREE,
         max_length=32,
-        verbose_name='Fee Type',
+        verbose_name="Fee Type",
     )
     fee_amount = models.IntegerField(
         validators=[
@@ -139,13 +143,13 @@ class Webinar(BaseModel):
 
 class RatingWebinar(BaseModel):
     webinar = models.ForeignKey(
-        'courses.Webinar',
+        "courses.Webinar",
         on_delete=models.CASCADE,
         related_name="rating_webinar",
         verbose_name="Webinar",
     )
     user = models.ForeignKey(
-        'user.User',
+        "user.User",
         on_delete=models.CASCADE,
         related_name="rating_webinar",
         verbose_name="User",
@@ -154,7 +158,8 @@ class RatingWebinar(BaseModel):
         validators=[
             MinValueValidator(1),
             MaxValueValidator(5),
-        ], verbose_name="Rating",
+        ],
+        verbose_name="Rating",
     )
 
     def __str__(self):
@@ -163,14 +168,14 @@ class RatingWebinar(BaseModel):
     class Meta:
         verbose_name = "Rating Course"
         verbose_name_plural = "Rating Courses"
-        ordering = ['-created_at']
+        ordering = ["-created_at"]
 
 
 class Module(BaseModel):
     title = models.CharField(max_length=128, verbose_name="Title")
     description = models.TextField(verbose_name="Description")
     course = models.ForeignKey(
-        'Course',
+        "Course",
         on_delete=models.CASCADE,
         verbose_name="Module",
         related_name="modules",
@@ -190,7 +195,7 @@ class Lesson(BaseModel):
     description = models.TextField(verbose_name="Description")
     file = models.FileField(upload_to="lessons/%Y/%m", null=True, blank=True)
     module = models.ForeignKey(
-        'Module',
+        "Module",
         on_delete=models.CASCADE,
         verbose_name="Module",
         related_name="lessons",
@@ -209,7 +214,7 @@ class Lesson(BaseModel):
 
 class Comment(BaseModel):
     user = models.ForeignKey(
-        'user.User',
+        "user.User",
         on_delete=models.CASCADE,
         verbose_name="Comment",
         related_name="comments",
@@ -236,7 +241,7 @@ class Comment(BaseModel):
             MinValueValidator(1),
             MaxValueValidator(5),
         ],
-        verbose_name="Rating"
+        verbose_name="Rating",
     )
 
     def __str__(self):
@@ -245,4 +250,4 @@ class Comment(BaseModel):
     class Meta:
         verbose_name = "Comment"
         verbose_name_plural = "Comments"
-        ordering = ['-rating']
+        ordering = ["-rating"]

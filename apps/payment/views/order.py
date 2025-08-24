@@ -24,13 +24,15 @@ class DeleteOrderAPIView(DestroyAPIView):
         instance = self.get_object()
 
         if instance.is_paid:
-            return Response({"error": "Order is already paid. And paid order cannot be deleted."})
+            return Response(
+                {"error": "Order is already paid. And paid order cannot be deleted."}
+            )
 
         self.perform_destroy(instance)
         return Response(
             {"message": "Order deleted successfully."},
-            status=status.HTTP_204_NO_CONTENT
+            status=status.HTTP_204_NO_CONTENT,
         )
 
 
-_all_ = ['OrderCreateAPIView', 'DeleteOrderAPIView']
+_all_ = ["OrderCreateAPIView", "DeleteOrderAPIView"]

@@ -2,10 +2,7 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
-from distutils.util import strtobool
 from dotenv import load_dotenv
-
-from core.schema import swagger_settings
 
 load_dotenv()
 
@@ -21,23 +18,29 @@ DJANGO_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    'rest_framework',
-    'rest_framework_simplejwt',
 ]
 
-LOCAL_APPS = [
-    "apps.common",
-    "apps.user",
-    "apps.courses",
-    "apps.news",
-    "apps.payment"
-]
+LOCAL_APPS = ["apps.common", "apps.user", "apps.courses", "apps.news", "apps.payment"]
 
 EXTERNAL_APPS = [
-    'drf_yasg',
-    'django_recaptcha',
-    'django_filters',
+    "rest_framework",
+    "rest_framework_simplejwt",
+    "drf_yasg",
+    "django_recaptcha",
+    "django_filters",
 ]
+
+REST_FRAMEWORK = {
+    "DEFAULT_RENDERER_CLASSES": [
+        "rest_framework.renderers.JSONRenderer",
+    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+}
 
 INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS + EXTERNAL_APPS
 
@@ -53,11 +56,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "core.urls"
 
-REST_FRAMEWORK = {
-    'DEFAULT_RENDERER_CLASSES': 'rest_framework.renderers.JSONRenderer',
-    'DEFAULT_AUTHENTICATION_CLASSES': 'rest_framework_simplejwt.authentication.JWTAuthentication',
-    'DEFAULT_PERMISSION_CLASSES': 'rest_framework.permissions.IsAuthenticated',
-}
+
 
 TEMPLATES = [
     {
@@ -76,7 +75,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "core.wsgi.application"
 # ASGI_APPLICATION = 'core.asgi.application'
-
 
 DATABASES = {
     "default": {
@@ -118,7 +116,7 @@ USE_I18N = True
 
 USE_TZ = True
 
-AUTH_USER_MODEL = 'user.User'  # app_name.ModelName
+AUTH_USER_MODEL = "user.User"  # app_name.ModelName
 
 # Static files (CSS, JavaScript, Images)
 
@@ -146,7 +144,7 @@ CACHES = {
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "SERIALIZER": "django_redis.serializers.json.JSONSerializer",
-        }
+        },
     }
 }
 
@@ -170,14 +168,16 @@ RECAPTCHA_PUBLIC_KEY = os.getenv("RECAPTCHA_PUBLIC_KEY")
 RECAPTCHA_PRIVATE_KEY = os.getenv("RECAPTCHA_PRIVATE_KEY")
 
 # EMAIL
-EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
+EMAIL_BACKEND = os.getenv(
+    "EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend"
+)
 EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
 EMAIL_PORT = os.getenv("EMAIL_PORT", 587)
-EMAIL_USE_TLS = bool(strtobool(os.getenv("EMAIL_USE_TLS", "True")))
-EMAIL_USE_SSL = bool(strtobool(os.getenv("EMAIL_USE_SSL", "False")))
+EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True") == "True"
+EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL", "False") == "True"
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
-DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "<EMAIL>")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "iuww zemi prnt plnx")
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "primel040304@gmail.com")
 
 # JWT config
 SIMPLE_JWT = {
@@ -194,18 +194,21 @@ SIMPLE_JWT = {
     "JSON_ENCODER": None,
     "JWK_URL": None,
     "LEEWAY": 0,
-
     "AUTH_HEADER_TYPES": ("Bearer",),
     "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
     "USER_ID_FIELD": "id",
     "USER_ID_CLAIM": "user_id",
     "USER_AUTHENTICATION_RULE": "rest_framework_simplejwt.authentication.default_user_authentication_rule",
-
     "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
     "TOKEN_TYPE_CLAIM": "token_type",
     "TOKEN_USER_CLASS": "rest_framework_simplejwt.models.TokenUser",
-
 }
 
 # Swagger settings
+from core.schema import swagger_settings  # noqa: E402
 SWAGGER_SETTINGS = swagger_settings
+
+#
+from importlib import reload
+import rest_framework.settings as drf_settings
+reload(drf_settings)

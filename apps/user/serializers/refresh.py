@@ -10,7 +10,9 @@ class RefreshTokenSerializer(serializers.Serializer):
             refresh_token = RefreshToken(value)
             return refresh_token
         except Exception as e:
-            raise serializers.ValidationError({"refresh": "Invalid or expired refresh token."})
+            raise serializers.ValidationError(
+                {"refresh": "Invalid or expired refresh token."}
+            )
 
     def save(self):
         return self.validated_data["refresh"]

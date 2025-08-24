@@ -20,7 +20,7 @@ class ValidateEmailView(GenericAPIView):
             return Response({"detail": "Token is missing"}, status=400)
 
         payload = validate_token(token=token)
-        user_pk = payload['user_pk']
+        user_pk = payload["user_pk"]
         user = gmu().objects.get(pk=user_pk)
 
         user.is_active = True
@@ -37,9 +37,10 @@ class ValidateEmailView(GenericAPIView):
                 "token": {
                     "refresh": str(refresh),
                     "access": str(refresh.access_token),
-                }
+                },
             },
-            status=200)
+            status=200,
+        )
 
 
 _all_ = ["ValidateEmailView"]

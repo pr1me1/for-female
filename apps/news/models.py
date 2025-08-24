@@ -9,8 +9,12 @@ from apps.user.models import User
 class Post(BaseModel):
     title = models.CharField(max_length=255, verbose_name="Title")
     description = models.TextField(verbose_name="Description")
-    card = models.ImageField(verbose_name="Card", upload_to="cards/", null=True, blank=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Author", null=True, blank=True)
+    card = models.ImageField(
+        verbose_name="Card", upload_to="cards/", null=True, blank=True
+    )
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, verbose_name="Author", null=True, blank=True
+    )
 
     def __str__(self):
         return self.title
@@ -18,16 +22,22 @@ class Post(BaseModel):
     class Meta:
         verbose_name = "Post"
         verbose_name_plural = "Posts"
+        ordering = ("-created_at",)
 
 
 class Event(BaseModel):
     title = models.CharField(max_length=255, verbose_name="Title")
-    description = models.TextField(verbose_name="Description")
-    card = models.ImageField(verbose_name="Card", upload_to="cards/", null=True, blank=True)
-    date = models.DateField(verbose_name="Date")
-    location = models.CharField(max_length=255, verbose_name="Location")
-    latitude = models.FloatField(verbose_name="Latitude")
-    longitude = models.FloatField(verbose_name="Longitude")
+    description = models.TextField(verbose_name="Description", blank=True)
+    card = models.ImageField(
+        verbose_name="Card", upload_to="cards/", null=True, blank=True
+    )
+    date = models.DateField(verbose_name="Date", blank=True)
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, verbose_name="Author", null=True, blank=True
+    )
+    location = models.CharField(max_length=255, verbose_name="Location", blank=True)
+    latitude = models.FloatField(verbose_name="Latitude", blank=True)
+    longitude = models.FloatField(verbose_name="Longitude", blank=True)
 
     def __str__(self):
         return self.title
@@ -35,19 +45,25 @@ class Event(BaseModel):
     class Meta:
         verbose_name = "Event"
         verbose_name_plural = "Events"
+        ordering = ("-created_at",)
 
 
 class Survey(BaseModel):
     title = models.CharField(max_length=255, verbose_name="Title")
     description = models.TextField(verbose_name="Description")
-    card = models.ImageField(verbose_name="Card", upload_to="cards/", null=True, blank=True)
+    card = models.ImageField(
+        verbose_name="Card", upload_to="cards/", null=True, blank=True
+    )
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, verbose_name="Author", null=True, blank=True
+    )
     course = models.ForeignKey(
         Course,
         on_delete=models.CASCADE,
         verbose_name="Course",
         related_name="surveys",
         blank=True,
-        null=True
+        null=True,
     )
 
     def __str__(self):
@@ -56,14 +72,13 @@ class Survey(BaseModel):
     class Meta:
         verbose_name = "Survey"
         verbose_name_plural = "Surveys"
+        ordering = ("-created_at",)
 
 
 class Question(BaseModel):
     title = models.CharField(max_length=255, verbose_name="Title")
     type = models.CharField(
-        choices=QuestionTypeChoices.choices,
-        max_length=128,
-        verbose_name="Type"
+        choices=QuestionTypeChoices.choices, max_length=128, verbose_name="Type"
     )
     survey = models.ForeignKey(
         Survey,
@@ -71,7 +86,9 @@ class Question(BaseModel):
         verbose_name="Survey",
         related_name="questions",
     )
-    file = models.FileField(verbose_name="File", upload_to="files/", null=True, blank=True)
+    file = models.FileField(
+        verbose_name="File", upload_to="files/", null=True, blank=True
+    )
 
     def __str__(self):
         return self.title
@@ -79,6 +96,7 @@ class Question(BaseModel):
     class Meta:
         verbose_name = "Question"
         verbose_name_plural = "Questions"
+        ordering = ("-created_at",)
 
 
 class QuestionOption(BaseModel):
@@ -96,6 +114,7 @@ class QuestionOption(BaseModel):
     class Meta:
         verbose_name = "QuestionOption"
         verbose_name_plural = "QuestionOptions"
+        ordering = ("-created_at",)
 
 
 class Submission(BaseModel):
@@ -127,3 +146,4 @@ class Submission(BaseModel):
     class Meta:
         verbose_name = "Submission"
         verbose_name_plural = "Submissions"
+        ordering = ("-created_at",)

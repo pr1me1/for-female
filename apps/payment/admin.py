@@ -1,6 +1,12 @@
 from django.contrib import admin
 
-from apps.payment.models import Order, Transaction, UserCard, Providers, ProviderCredentials
+from apps.payment.models import (
+    Order,
+    Transaction,
+    UserCard,
+    Providers,
+    ProviderCredentials,
+)
 
 
 @admin.register(Order)
@@ -21,7 +27,14 @@ class TransactionAdmin(admin.ModelAdmin):
 
 @admin.register(UserCard)
 class UserCardAdmin(admin.ModelAdmin):
-    list_display = ("id", "user__username", "provider__name", "card_number", "expire_date", "is_confirmed")
+    list_display = (
+        "id",
+        "user__username",
+        "provider__name",
+        "card_number",
+        "expire_date",
+        "is_confirmed",
+    )
     list_display_links = ("id", "user__username")
     list_filter = ("provider", "is_confirmed")
     search_fields = ("user__username", "card_number")

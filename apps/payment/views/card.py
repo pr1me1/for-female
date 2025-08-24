@@ -11,7 +11,7 @@ from apps.payment.serializers.card import (
     ConfirmCardSerializer,
     DeleteCardSerializer,
     CardReceiptCreateSerializer,
-    CardReceiptConfirmSerializer
+    CardReceiptConfirmSerializer,
 )
 
 
@@ -155,5 +155,12 @@ class UserCardReceiptConfirmAPIView(APIView):
         return Response(data=response, status=status.HTTP_200_OK)
 
 
-_all_ = ['AddCardAPIView', 'ConfirmUserCardAPIView', 'DeleteUserCardAPIView', 'GetSingleUserCardAPIView',
-         'ListUserCardsAPIView', 'UserCardReceiptCreateAPIView', 'UserCardReceiptConfirmAPIView']
+_all_ = [
+    "AddCardAPIView",
+    "ConfirmUserCardAPIView",
+    "DeleteUserCardAPIView",
+    "GetSingleUserCardAPIView",
+    "ListUserCardsAPIView",
+    "UserCardReceiptCreateAPIView",
+    "UserCardReceiptConfirmAPIView",
+]

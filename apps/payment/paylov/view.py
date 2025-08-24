@@ -86,8 +86,10 @@ class PaylovAPIView(APIView):
             transaction.save(update_fields=["status"])
             return dict(result=dict(status=code, statusText=STATUS_TEXT["ERROR"]))
 
-        transaction.apply_transaction(provider=provider, transaction_id=self.params['transaction_id'])
+        transaction.apply_transaction(
+            provider=provider, transaction_id=self.params["transaction_id"]
+        )
         return dict(result=dict(status=code, statusText=STATUS_TEXT["SUCCESS"]))
 
 
-_all_ = ['PaylovAPIView']
+_all_ = ["PaylovAPIView"]

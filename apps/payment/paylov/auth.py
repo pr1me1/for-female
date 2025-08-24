@@ -10,7 +10,6 @@ from apps.payment.paylov.credentials import get_credentials
 def authentication(request) -> bool:
     auth = get_authorization_header(request).split()
 
-
     if not auth or auth[0].lower() != b"basic":
         return False
 

@@ -13,7 +13,7 @@ class WebinarModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Webinar
-        fields = '__all__'
+        fields = "__all__"
         extra_kwargs = {
             "title": {"required": False},
             "author_display_name": {"required": False},
@@ -21,34 +21,46 @@ class WebinarModelSerializer(serializers.ModelSerializer):
             "price": {"required": False},
             "cover": {"required": False},
             "category": {"required": False},
-            "author": {"required": False, 'null': True},
+            "author": {"required": False, "null": True},
             "datetime": {"required": False},
             "status": {"required": False},
             "fee_type": {"required": False},
             "fee_amount": {"required": False},
         }
-        read_only_fields = ("id", 'author',)
+        read_only_fields = (
+            "id",
+            "author",
+        )
 
     def get_fields(self):
         fields = super().get_fields()
-        exclude_fields = self.context.get('exclude_fields', [])
+        exclude_fields = self.context.get("exclude_fields", [])
         return {k: v for k, v in fields.items() if k not in exclude_fields}
 
     def get_author(self, obj):
-        exclude_fields = ['is_staff', 'is_superuser', ]
-        exclude_profile_fields = ['last_name', 'phone_number', 'bio', 'id']
+        exclude_fields = [
+            "is_staff",
+            "is_superuser",
+        ]
+        exclude_profile_fields = ["last_name", "phone_number", "bio", "id"]
         author_serializer = UserProfileResponseSerializer(
             obj.author,
-            context={'exclude_profile_fields': exclude_profile_fields, 'exclude_fields': exclude_fields}
+            context={
+                "exclude_profile_fields": exclude_profile_fields,
+                "exclude_fields": exclude_fields,
+            },
         )
 
         return author_serializer.data
 
     def get_category(self, obj):
-        exclude_fields = ['id', 'created_at', 'updated_at', ]
+        exclude_fields = [
+            "id",
+            "created_at",
+            "updated_at",
+        ]
         category_serializer = CategoryModelSerializer(
-            obj.category,
-            context={'exclude_fields': exclude_fields}
+            obj.category, context={"exclude_fields": exclude_fields}
         )
         return category_serializer.data
 
@@ -59,7 +71,9 @@ class WebinarCreateSerializer(serializers.Serializer):
     description = serializers.CharField(required=False, allow_blank=True)
     price = serializers.CharField(required=False, allow_blank=True)
     datetime = serializers.CharField(required=False, allow_blank=True)
-    fee_type = serializers.ChoiceField(choices=FeeType.choices, required=False, allow_blank=True)
+    fee_type = serializers.ChoiceField(
+        choices=FeeType.choices, required=False, allow_blank=True
+    )
     fee_amount = serializers.CharField(required=False, allow_blank=True)
     category_id = serializers.IntegerField(required=False)
 
@@ -72,7 +86,7 @@ class WebinarCreateSerializer(serializers.Serializer):
     @transaction.atomic
     def create(self, validated_data):
         user = self.get_user()
-        category_id = validated_data.get('category_id')
+        category_id = validated_data.get("category_id")
 
         try:
             category = Category.objects.filter(id=category_id).first()
@@ -80,13 +94,13 @@ class WebinarCreateSerializer(serializers.Serializer):
             raise serializers.ValidationError({"error": str(e)})
 
         webinar = Webinar.objects.create(
-            title=validated_data.get('title', ''),
-            author_display_name=validated_data.get('author_display_name', ''),
-            description=validated_data.get('description', ''),
-            price=validated_data.get('price', '0'),
-            datetime=validated_data.get('datetime', '0'),
-            fee_type=validated_data.get('fee_type', 'free'),
-            fee_amount=validated_data.get('fee_amount', '0'),
+            title=validated_data.get("title", ""),
+            author_display_name=validated_data.get("author_display_name", ""),
+            description=validated_data.get("description", ""),
+            price=validated_data.get("price", "0"),
+            datetime=validated_data.get("datetime", "0"),
+            fee_type=validated_data.get("fee_type", "free"),
+            fee_amount=validated_data.get("fee_amount", "0"),
             category=category,
             author=user,
         )

@@ -11,20 +11,28 @@ class ModuleModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Module
-        fields = '__all__'
-        read_only_fields = ('course', 'id')
+        fields = "__all__"
+        read_only_fields = ("course", "id")
 
     def get_fields(self):
         fields = super().get_fields()
-        exclude_fields = self.context.get('exclude_fields', [])
+        exclude_fields = self.context.get("exclude_fields", [])
         return {k: v for k, v in fields.items() if k not in exclude_fields}
 
     def get_course(self, obj):
-        exclude_fields = ['id', 'created_at', 'updated_at', 'author', 'category', 'description', 'price', 'discount',
-                          'card']
+        exclude_fields = [
+            "id",
+            "created_at",
+            "updated_at",
+            "author",
+            "category",
+            "description",
+            "price",
+            "discount",
+            "card",
+        ]
         category_serializer = CourseModelSerializer(
-            obj.course,
-            context={'exclude_fields': exclude_fields}
+            obj.course, context={"exclude_fields": exclude_fields}
         )
         return category_serializer.data
 
@@ -34,14 +42,14 @@ class CreateModuleSerializer(serializers.Serializer):
     description = serializers.CharField(max_length=128)
 
     def get_user(self):
-        request = self.context.get('request')
-        user = getattr(request, 'user', None)
+        request = self.context.get("request")
+        user = getattr(request, "user", None)
         if not user or not user.is_authenticated:
             raise ValidationError({"error": "User not found or not authenticated."})
         return user
 
     def get_course(self):
-        course_id = self.context.get('course_id')
+        course_id = self.context.get("course_id")
         if not course_id:
             raise ValidationError({"error": "Course ID is required."})
 
@@ -52,7 +60,9 @@ class CreateModuleSerializer(serializers.Serializer):
 
     def check_permission(self, user, course):
         if user != course.author:
-            raise PermissionDenied("You are not authorized to add a module to this course.")
+            raise PermissionDenied(
+                "You are not authorized to add a module to this course."
+            )
 
     def create(self, validated_data):
         user = self.get_user()
@@ -61,7 +71,7 @@ class CreateModuleSerializer(serializers.Serializer):
 
         with transaction.atomic():
             return Module.objects.create(
-                title=validated_data['title'],
-                description=validated_data['description'],
+                title=validated_data["title"],
+                description=validated_data["description"],
                 course=course,
             )

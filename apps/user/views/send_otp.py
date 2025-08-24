@@ -17,8 +17,8 @@ class SendOTPView(GenericAPIView):
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        email = serializer.validated_data['email']
-        password = serializer.validated_data['password']
+        email = serializer.validated_data["email"]
+        password = serializer.validated_data["password"]
 
         expires_in = int(time.time()) + 60 * 60 * 24 * 10
 
@@ -27,7 +27,7 @@ class SendOTPView(GenericAPIView):
         )
 
         user.set_password(password)
-        user.save(update_fields=['password'])
+        user.save(update_fields=["password"])
 
         if user.is_active:
             return Response({"message": "User already activated!"})
@@ -37,8 +37,8 @@ class SendOTPView(GenericAPIView):
 
         token = create_token(email=email, expires_in=expires_in, user_pk=user.pk)
 
-        send_validation_email(serializer.data['email'], token, request)
+        send_validation_email(serializer.data["email"], token, request)
         return Response({"detail": "Validation email sent."}, status=200)
 
 
-__all__ = ['SendOTPView']
+__all__ = ["SendOTPView"]

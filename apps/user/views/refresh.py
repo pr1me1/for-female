@@ -19,15 +19,19 @@ class RefreshTokenAPIView(GenericAPIView):
         refresh_token = serializer.save()
 
         access_token = str(refresh_token.access_token)
-        user_id = refresh_token.payload.get('user_id')
+        user_id = refresh_token.payload.get("user_id")
         try:
             user = User.objects.get(id=user_id, is_deleted=False)
         except User.DoesNotExist:
-            raise serializers.ValidationError({"error": "User not found or has been deleted."})
+            raise serializers.ValidationError(
+                {"error": "User not found or has been deleted."}
+            )
 
         response_data = {
-            "user": UserProfileResponseSerializer(user, context={'request': request}).data,
-            "access": access_token
+            "user": UserProfileResponseSerializer(
+                user, context={"request": request}
+            ).data,
+            "access": access_token,
         }
 
         return Response(response_data, status=status.HTTP_200_OK)

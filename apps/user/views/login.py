@@ -20,9 +20,11 @@ class LoginAPIView(GenericAPIView):
         refresh = RefreshToken.for_user(user)
 
         response_data = {
-            "user": UserProfileResponseSerializer(user, context={'request': request}).data,
+            "user": UserProfileResponseSerializer(
+                user, context={"request": request}
+            ).data,
             "refresh": str(refresh),
-            "access": str(refresh.access_token)
+            "access": str(refresh.access_token),
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
